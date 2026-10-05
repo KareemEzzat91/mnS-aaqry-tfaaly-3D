@@ -79,6 +79,49 @@ export interface LeadConfirmation {
   submittedAt: string;
 }
 
+export type AdminLeadStatus = typeof AdminLeadStatus[keyof typeof AdminLeadStatus];
+
+
+export const AdminLeadStatus = {
+  new: 'new',
+  contacted: 'contacted',
+  visit_scheduled: 'visit_scheduled',
+  closed: 'closed',
+} as const;
+
+export interface AdminLead {
+  id: string;
+  name: string;
+  phone: string;
+  /** @nullable */
+  email: string | null;
+  unitId: string;
+  /** @nullable */
+  message: string | null;
+  consent: boolean;
+  status: AdminLeadStatus;
+  createdAt: string;
+}
+
+export interface AdminLeadStatusUpdate {
+  status: AdminLeadStatus;
+}
+
+export type AdminUnitUpdateStatus = typeof AdminUnitUpdateStatus[keyof typeof AdminUnitUpdateStatus];
+
+
+export const AdminUnitUpdateStatus = {
+  available: 'available',
+  reserved: 'reserved',
+  sold: 'sold',
+} as const;
+
+export interface AdminUnitUpdate {
+  status: AdminUnitUpdateStatus;
+  /** @minimum 1 */
+  price: number;
+}
+
 export type GetUnitsParams = {
 buildingId?: string;
 floor?: number;

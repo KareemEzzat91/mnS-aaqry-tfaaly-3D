@@ -20,6 +20,9 @@ import type {
 } from '@tanstack/react-query';
 
 import type {
+  AdminLead,
+  AdminLeadStatusUpdate,
+  AdminUnitUpdate,
   Building,
   GetUnitsParams,
   HealthStatus,
@@ -535,5 +538,263 @@ export const useCreateLead = <TError = ErrorType<void>,
         TContext
       > => {
       return useMutation(getCreateLeadMutationOptions(options));
+    }
+
+export const getGetAdminLeadsUrl = () => {
+
+
+
+
+  return `/api/admin/leads`
+}
+
+/**
+ * Requires an authenticated Clerk user with a verified allowlisted email.
+ * @summary List sales inquiries for authorized staff
+ */
+export const getAdminLeads = async ( options?: Parameters<typeof customFetch>[1]): Promise<AdminLead[]> => {
+
+  return customFetch<AdminLead[]>(getGetAdminLeadsUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetAdminLeadsQueryKey = () => {
+    return [
+    `/api/admin/leads`
+    ] as const;
+    }
+
+
+export const getGetAdminLeadsQueryOptions = <TData = Awaited<ReturnType<typeof getAdminLeads>>, TError = ErrorType<void>>( options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getAdminLeads>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetAdminLeadsQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getAdminLeads>>> = ({ signal }) => getAdminLeads({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getAdminLeads>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetAdminLeadsQueryResult = NonNullable<Awaited<ReturnType<typeof getAdminLeads>>>
+export type GetAdminLeadsQueryError = ErrorType<void>
+
+
+/**
+ * @summary List sales inquiries for authorized staff
+ */
+
+export function useGetAdminLeads<TData = Awaited<ReturnType<typeof getAdminLeads>>, TError = ErrorType<void>>(
+  options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getAdminLeads>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getGetAdminLeadsQueryOptions(options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getUpdateAdminLeadUrl = (leadId: string,) => {
+
+
+
+
+  return `/api/admin/leads/${leadId}`
+}
+
+/**
+ * Requires an authenticated Clerk user with a verified allowlisted email.
+ * @summary Update the status of a sales inquiry
+ */
+export const updateAdminLead = async (leadId: string,
+    adminLeadStatusUpdate: AdminLeadStatusUpdate, options?: Parameters<typeof customFetch>[1]): Promise<AdminLead> => {
+
+    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Symbol.iterator in h) {
+      return Object.fromEntries(
+        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
+      );
+    }
+    const headers: Record<string, string | readonly string[]> = {};
+    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
+      if (value !== undefined) headers[name] = value;
+    }
+    return headers;
+  };
+return customFetch<AdminLead>(getUpdateAdminLeadUrl(leadId),
+  {
+    ...options,
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
+    body: JSON.stringify(adminLeadStatusUpdate)
+  }
+);}
+
+
+
+
+
+export const getUpdateAdminLeadMutationKey = () => ['updateAdminLead'] as const;
+
+export const getUpdateAdminLeadMutationOptions = <TError = ErrorType<void>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateAdminLead>>, TError,UpdateAdminLeadMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof updateAdminLead>>, TError,UpdateAdminLeadMutationVariables, TContext> => {
+
+const mutationKey = getUpdateAdminLeadMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof updateAdminLead>>, UpdateAdminLeadMutationVariables> = (props) => {
+          const {leadId,data} = props ?? {};
+
+          return  updateAdminLead(leadId,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type UpdateAdminLeadMutationResult = NonNullable<Awaited<ReturnType<typeof updateAdminLead>>>
+    export type UpdateAdminLeadMutationBody = BodyType<AdminLeadStatusUpdate>
+    export type UpdateAdminLeadMutationError = ErrorType<void>
+    export type UpdateAdminLeadMutationVariables = {leadId: string;data: BodyType<AdminLeadStatusUpdate>}
+
+    /**
+ * @summary Update the status of a sales inquiry
+ */
+export const useUpdateAdminLead = <TError = ErrorType<void>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateAdminLead>>, TError,UpdateAdminLeadMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof updateAdminLead>>,
+        TError,
+        UpdateAdminLeadMutationVariables,
+        TContext
+      > => {
+      return useMutation(getUpdateAdminLeadMutationOptions(options));
+    }
+
+export const getUpdateAdminUnitUrl = (unitId: string,) => {
+
+
+
+
+  return `/api/admin/units/${unitId}`
+}
+
+/**
+ * Requires an authenticated Clerk user with a verified allowlisted email.
+ * @summary Update a home's status and asking price
+ */
+export const updateAdminUnit = async (unitId: string,
+    adminUnitUpdate: AdminUnitUpdate, options?: Parameters<typeof customFetch>[1]): Promise<Unit> => {
+
+    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Symbol.iterator in h) {
+      return Object.fromEntries(
+        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
+      );
+    }
+    const headers: Record<string, string | readonly string[]> = {};
+    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
+      if (value !== undefined) headers[name] = value;
+    }
+    return headers;
+  };
+return customFetch<Unit>(getUpdateAdminUnitUrl(unitId),
+  {
+    ...options,
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
+    body: JSON.stringify(adminUnitUpdate)
+  }
+);}
+
+
+
+
+
+export const getUpdateAdminUnitMutationKey = () => ['updateAdminUnit'] as const;
+
+export const getUpdateAdminUnitMutationOptions = <TError = ErrorType<void>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateAdminUnit>>, TError,UpdateAdminUnitMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof updateAdminUnit>>, TError,UpdateAdminUnitMutationVariables, TContext> => {
+
+const mutationKey = getUpdateAdminUnitMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof updateAdminUnit>>, UpdateAdminUnitMutationVariables> = (props) => {
+          const {unitId,data} = props ?? {};
+
+          return  updateAdminUnit(unitId,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type UpdateAdminUnitMutationResult = NonNullable<Awaited<ReturnType<typeof updateAdminUnit>>>
+    export type UpdateAdminUnitMutationBody = BodyType<AdminUnitUpdate>
+    export type UpdateAdminUnitMutationError = ErrorType<void>
+    export type UpdateAdminUnitMutationVariables = {unitId: string;data: BodyType<AdminUnitUpdate>}
+
+    /**
+ * @summary Update a home's status and asking price
+ */
+export const useUpdateAdminUnit = <TError = ErrorType<void>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateAdminUnit>>, TError,UpdateAdminUnitMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof updateAdminUnit>>,
+        TError,
+        UpdateAdminUnitMutationVariables,
+        TContext
+      > => {
+      return useMutation(getUpdateAdminUnitMutationOptions(options));
     }
 

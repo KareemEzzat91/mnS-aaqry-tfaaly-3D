@@ -14,6 +14,8 @@ tags:
     description: VIVID City project and unit browsing
   - name: leads
     description: Sales interest requests
+  - name: admin
+    description: Restricted staff operations
 paths:
   /healthz:
     get:
@@ -124,6 +126,88 @@ paths:
                 $ref: "#/components/schemas/LeadConfirmation"
         "400":
           description: Invalid request
+  /admin/leads:
+    get:
+      operationId: getAdminLeads
+      tags: [admin]
+      summary: List sales inquiries for authorized staff
+      description: Requires an authenticated Clerk user with a verified allowlisted email.
+      responses:
+        "200":
+          description: Recent sales inquiries, including contact details
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/AdminLead"
+        "401":
+          description: Sign-in required
+        "403":
+          description: Staff access required
+  /admin/leads/{leadId}:
+    patch:
+      operationId: updateAdminLead
+      tags: [admin]
+      summary: Update the status of a sales inquiry
+      description: Requires an authenticated Clerk user with a verified allowlisted email.
+      parameters:
+        - name: leadId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AdminLeadStatusUpdate"
+      responses:
+        "200":
+          description: Updated inquiry
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminLead"
+        "401":
+          description: Sign-in required
+        "403":
+          description: Staff access required
+        "404":
+          description: Inquiry not found
+  /admin/units/{unitId}:
+    patch:
+      operationId: updateAdminUnit
+      tags: [admin]
+      summary: Update a home's status and asking price
+      description: Requires an authenticated Clerk user with a verified allowlisted email.
+      parameters:
+        - name: unitId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AdminUnitUpdate"
+      responses:
+        "200":
+          description: Updated home
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Unit"
+        "401":
+          description: Sign-in required
+        "403":
+          description: Staff access required
+        "404":
+          description: Home not found
 components:
   schemas:
     HealthStatus:
@@ -271,4 +355,56 @@ components:
         submittedAt:
           type: string
           format: date-time
+    AdminLead:
+      type: object
+      required:
+        - id
+        - name
+        - phone
+        - email
+        - unitId
+        - message
+        - consent
+        - status
+        - createdAt
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        phone:
+          type: string
+        email:
+          type: [string, "null"]
+        unitId:
+          type: string
+        message:
+          type: [string, "null"]
+        consent:
+          type: boolean
+        status:
+          $ref: "#/components/schemas/AdminLeadStatus"
+        createdAt:
+          type: string
+          format: date-time
+    AdminLeadStatus:
+      type: string
+      enum: [new, contacted, visit_scheduled, closed]
+    AdminLeadStatusUpdate:
+      type: object
+      required: [status]
+      properties:
+        status:
+          $ref: "#/components/schemas/AdminLeadStatus"
+    AdminUnitUpdate:
+      type: object
+      required: [status, price]
+      properties:
+        status:
+          type: string
+          enum: [available, reserved, sold]
+        price:
+          type: integer
+          minimum: 1
 

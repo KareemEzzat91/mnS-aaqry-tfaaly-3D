@@ -17,6 +17,7 @@ import {
   projectsTable,
   unitsTable,
 } from "@workspace/db";
+import { requireSameOrigin } from "../middlewares/requireAdmin";
 
 const router: IRouter = Router();
 
@@ -98,7 +99,7 @@ router.get("/units/:unitId", async (req, res): Promise<void> => {
   res.json(GetUnitResponse.parse(unit));
 });
 
-router.post("/leads", async (req, res): Promise<void> => {
+router.post("/leads", requireSameOrigin, async (req, res): Promise<void> => {
   const parsedBody = CreateLeadBody.safeParse(req.body);
   if (!parsedBody.success) {
     req.log.warn({ errors: parsedBody.error.message }, "Invalid sales inquiry");

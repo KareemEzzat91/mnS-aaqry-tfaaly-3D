@@ -13,6 +13,11 @@ export const leadsTable = pgTable("leads", {
     .references(() => unitsTable.id, { onDelete: "restrict" }),
   message: text("message"),
   consent: boolean("consent").notNull(),
+  status: text("status", {
+    enum: ["new", "contacted", "visit_scheduled", "closed"],
+  })
+    .notNull()
+    .default("new"),
   createdAt: timestamp("created_at", { withTimezone: true })
     .notNull()
     .defaultNow(),

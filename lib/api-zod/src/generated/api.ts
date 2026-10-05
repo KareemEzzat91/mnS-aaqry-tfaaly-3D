@@ -125,3 +125,76 @@ export const CreateLeadResponse = zod.object({
 })
 
 
+/**
+ * Requires an authenticated Clerk user with a verified allowlisted email.
+ * @summary List sales inquiries for authorized staff
+ */
+export const GetAdminLeadsResponseItem = zod.object({
+  "id": zod.string().uuid(),
+  "name": zod.string(),
+  "phone": zod.string(),
+  "email": zod.string().nullable(),
+  "unitId": zod.string(),
+  "message": zod.string().nullable(),
+  "consent": zod.boolean(),
+  "status": zod.enum(['new', 'contacted', 'visit_scheduled', 'closed']),
+  "createdAt": zod.coerce.date()
+})
+export const GetAdminLeadsResponse = zod.array(GetAdminLeadsResponseItem)
+
+
+/**
+ * Requires an authenticated Clerk user with a verified allowlisted email.
+ * @summary Update the status of a sales inquiry
+ */
+export const UpdateAdminLeadParams = zod.object({
+  "leadId": zod.coerce.string().uuid()
+})
+
+export const UpdateAdminLeadBody = zod.object({
+  "status": zod.enum(['new', 'contacted', 'visit_scheduled', 'closed'])
+})
+
+export const UpdateAdminLeadResponse = zod.object({
+  "id": zod.string().uuid(),
+  "name": zod.string(),
+  "phone": zod.string(),
+  "email": zod.string().nullable(),
+  "unitId": zod.string(),
+  "message": zod.string().nullable(),
+  "consent": zod.boolean(),
+  "status": zod.enum(['new', 'contacted', 'visit_scheduled', 'closed']),
+  "createdAt": zod.coerce.date()
+})
+
+
+/**
+ * Requires an authenticated Clerk user with a verified allowlisted email.
+ * @summary Update a home's status and asking price
+ */
+export const UpdateAdminUnitParams = zod.object({
+  "unitId": zod.coerce.string()
+})
+
+
+
+
+export const UpdateAdminUnitBody = zod.object({
+  "status": zod.enum(['available', 'reserved', 'sold']),
+  "price": zod.number().int().min(1)
+})
+
+export const UpdateAdminUnitResponse = zod.object({
+  "id": zod.string(),
+  "buildingId": zod.string(),
+  "floor": zod.number().int(),
+  "bedrooms": zod.number().int(),
+  "bathrooms": zod.number().int(),
+  "areaM2": zod.number(),
+  "price": zod.number(),
+  "currency": zod.string(),
+  "view": zod.string(),
+  "status": zod.enum(['available', 'reserved', 'sold'])
+})
+
+
