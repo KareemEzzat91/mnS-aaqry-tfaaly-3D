@@ -1,45 +1,51 @@
-# [Project name]
+# VIVID City — Real Estate Explorer
 
-_Replace the heading above with the project's name, and this line with one sentence describing what this app does for users._
+An Arabic-first sample real-estate showroom for exploring a development, browsing homes, sharing unit pages, and requesting a private visit.
 
 ## Run & Operate
 
-- `pnpm --filter @workspace/api-server run dev` — run the API server (port 5000)
-- `pnpm run typecheck` — full typecheck across all packages
-- `pnpm run build` — typecheck + build all packages
+- `pnpm --filter @workspace/api-server run dev` — run the API server (port 8080)
+- `pnpm --filter @workspace/vivid-city run dev` — run the Vite web app through its managed workflow
+- `pnpm run typecheck` — typecheck libraries and all workspace apps
 - `pnpm --filter @workspace/api-spec run codegen` — regenerate API hooks and Zod schemas from the OpenAPI spec
-- `pnpm --filter @workspace/db run push` — push DB schema changes (dev only)
-- Required env: `DATABASE_URL` — Postgres connection string
+- `pnpm --filter @workspace/db run push` — push schema changes to the development database only
 
 ## Stack
 
 - pnpm workspaces, Node.js 24, TypeScript 5.9
+- Web: React, Vite, Wouter, TanStack Query
 - API: Express 5
 - DB: PostgreSQL + Drizzle ORM
-- Validation: Zod (`zod/v4`), `drizzle-zod`
-- API codegen: Orval (from OpenAPI spec)
-- Build: esbuild (CJS bundle)
+- Validation and API codegen: Zod, Orval, contract-first OpenAPI
+- API bundling: esbuild
 
 ## Where things live
 
-_Populate as you build — short repo map plus pointers to the source-of-truth file for DB schema, API contracts, theme files, etc._
+- `artifacts/vivid-city/` — Arabic-first visitor experience and shareable home pages
+- `artifacts/api-server/` — project, building, unit, and consent-based visit-request endpoints
+- `lib/api-spec/openapi.yaml` — source-of-truth API contract
+- `lib/db/src/schema/` — Drizzle schema; seed data lives with the database package
 
 ## Architecture decisions
 
-_Populate as you build — non-obvious choices a reader couldn't infer from the code (3-5 bullets)._
+- Keep the OpenAPI file as the API source of truth and regenerate shared hooks/schemas after contract changes.
+- Do not add a public route for reading visit requests. Any future sales dashboard must authenticate and authorize staff before exposing personal contact details.
+- Current inventory, prices, completion date, visuals, and floor plans are illustrative sample content, not verified development information.
 
 ## Product
 
-_Describe the high-level user-facing capabilities of this app once they exist._
+- Visitors can explore the sample site plan, filter homes by building/floor/bedrooms, view unit details, copy a deep link or display a QR code, and request a visit with explicit consent.
+- The customer-facing flow is implemented; the authenticated sales/admin dashboard and AR/VR experiences are not part of this first delivery.
 
 ## User preferences
 
-_Populate as you build — explicit user instructions worth remembering across sessions._
+- None recorded.
 
 ## Gotchas
 
-_Populate as you build — sharp edges, "always run X before Y" rules._
+- Replace sample listings, prices, dates, artwork, and illustrative plans with approved project assets before presenting this as a live development.
+- Keep lead details private; do not expose them through unauthenticated API routes or an unrestricted dashboard.
 
 ## Pointers
 
-- See the `pnpm-workspace` skill for workspace structure, TypeScript setup, and package details
+- See the `pnpm-workspace` skill for workspace structure, TypeScript setup, and package details.

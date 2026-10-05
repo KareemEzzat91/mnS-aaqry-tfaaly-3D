@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "VIVID City — Real Estate Explorer"
+description = "An Arabic-first interactive real estate showcase for exploring the VIVID City development, comparing homes, and requesting a sales visit."
+version = "1.0.0"
+id = "artifacts/vivid-city"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 22894
+
+[services.development]
+run = "pnpm --filter @workspace/vivid-city run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/vivid-city", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/vivid-city/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "22894"
+BASE_PATH = "/"

@@ -1,0 +1,1 @@
+- [VIVID City demo scope](vivid-city-demo-scope.md) — keep seed inventory and visuals clearly illustrative; require authorized access before exposing lead details.

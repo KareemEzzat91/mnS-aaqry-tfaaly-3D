@@ -3,13 +3,17 @@ info:
   # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: Real estate project exploration and lead capture API
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: real-estate
+    description: VIVID City project and unit browsing
+  - name: leads
+    description: Sales interest requests
 paths:
   /healthz:
     get:
@@ -24,6 +28,102 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+  /project:
+    get:
+      operationId: getProject
+      tags: [real-estate]
+      summary: Get the featured development
+      responses:
+        "200":
+          description: Featured real estate project
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Project"
+  /buildings:
+    get:
+      operationId: getBuildings
+      tags: [real-estate]
+      summary: List buildings in the featured development
+      responses:
+        "200":
+          description: Buildings with availability and site-plan coordinates
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Building"
+  /units:
+    get:
+      operationId: getUnits
+      tags: [real-estate]
+      summary: Search available and reserved units
+      parameters:
+        - name: buildingId
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: floor
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: bedrooms
+          in: query
+          required: false
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Matching units
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Unit"
+  /units/{unitId}:
+    get:
+      operationId: getUnit
+      tags: [real-estate]
+      summary: Get a unit by its deep-link identifier
+      parameters:
+        - name: unitId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Unit details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Unit"
+        "404":
+          description: Unit not found
+  /leads:
+    post:
+      operationId: createLead
+      tags: [leads]
+      summary: Submit a request to contact the sales team
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LeadInput"
+      responses:
+        "201":
+          description: Request received
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LeadConfirmation"
+        "400":
+          description: Invalid request
 components:
   schemas:
     HealthStatus:
@@ -33,4 +133,142 @@ components:
           type: string
       required:
         - status
+    Project:
+      type: object
+      required:
+        - id
+        - name
+        - tagline
+        - location
+        - description
+        - completion
+        - totalHomes
+        - availableHomes
+        - startingPrice
+        - currency
+        - amenities
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        tagline:
+          type: string
+        location:
+          type: string
+        description:
+          type: string
+        completion:
+          type: string
+        totalHomes:
+          type: integer
+        availableHomes:
+          type: integer
+        startingPrice:
+          type: number
+        currency:
+          type: string
+        amenities:
+          type: array
+          items:
+            type: string
+    Building:
+      type: object
+      required:
+        - id
+        - name
+        - floors
+        - totalUnits
+        - availableUnits
+        - x
+        - y
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        floors:
+          type: integer
+        totalUnits:
+          type: integer
+        availableUnits:
+          type: integer
+        x:
+          type: number
+        y:
+          type: number
+    Unit:
+      type: object
+      required:
+        - id
+        - buildingId
+        - floor
+        - bedrooms
+        - bathrooms
+        - areaM2
+        - price
+        - currency
+        - view
+        - status
+      properties:
+        id:
+          type: string
+        buildingId:
+          type: string
+        floor:
+          type: integer
+        bedrooms:
+          type: integer
+        bathrooms:
+          type: integer
+        areaM2:
+          type: number
+        price:
+          type: number
+        currency:
+          type: string
+        view:
+          type: string
+        status:
+          type: string
+          enum: [available, reserved, sold]
+    LeadInput:
+      type: object
+      required:
+        - name
+        - phone
+        - unitId
+        - consent
+      properties:
+        name:
+          type: string
+          minLength: 2
+          maxLength: 120
+        phone:
+          type: string
+          minLength: 7
+          maxLength: 32
+        email:
+          type: string
+          format: email
+          maxLength: 254
+        unitId:
+          type: string
+        message:
+          type: string
+          maxLength: 1000
+        consent:
+          type: boolean
+          enum: [true]
+    LeadConfirmation:
+      type: object
+      required:
+        - id
+        - submittedAt
+      properties:
+        id:
+          type: string
+        submittedAt:
+          type: string
+          format: date-time
 
