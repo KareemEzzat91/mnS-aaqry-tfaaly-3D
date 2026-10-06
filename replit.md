@@ -21,21 +21,22 @@ An Arabic-first sample real-estate showroom for exploring a development, browsin
 
 ## Where things live
 
-- `artifacts/vivid-city/` — Arabic-first visitor experience and shareable home pages
-- `artifacts/api-server/` — project, building, unit, and consent-based visit-request endpoints
+- `artifacts/vivid-city/` — Arabic-first public visitor experience and private sales dashboard
+- `artifacts/api-server/` — public project, building, unit, and visit-request endpoints plus protected staff APIs
 - `lib/api-spec/openapi.yaml` — source-of-truth API contract
 - `lib/db/src/schema/` — Drizzle schema; seed data lives with the database package
 
 ## Architecture decisions
 
 - Keep the OpenAPI file as the API source of truth and regenerate shared hooks/schemas after contract changes.
-- Do not add a public route for reading visit requests. Any future sales dashboard must authenticate and authorize staff before exposing personal contact details.
+- Keep lead contact details behind Clerk authentication and server-side authorization against the configured staff allowlist; never expose them through public routes.
 - Current inventory, prices, completion date, visuals, and floor plans are illustrative sample content, not verified development information.
 
 ## Product
 
 - Visitors can explore the sample site plan, filter homes by building/floor/bedrooms, view unit details, copy a deep link or display a QR code, and request a visit with explicit consent.
-- The customer-facing flow is implemented; the authenticated sales/admin dashboard and AR/VR experiences are not part of this first delivery.
+- Authorized sales staff can review and update lead statuses and edit listing availability and prices from the private dashboard.
+- AR/VR experiences remain deferred until approved architectural assets are available.
 
 ## User preferences
 

@@ -60,7 +60,7 @@ export const requireAdmin: RequestHandler = async (
       (email) => email.id === user.primaryEmailAddressId,
     );
     const verifiedEmail =
-      primaryEmail?.verification.status === "verified"
+      primaryEmail?.verification?.status === "verified"
         ? primaryEmail.emailAddress.trim().toLowerCase()
         : undefined;
 
