@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'wouter';
-import { ArrowDownLeft, ArrowLeft, ArrowUpRight, MapPin } from 'lucide-react';
+import { ArrowDownLeft, ArrowLeft, ArrowUpRight, LogIn, MapPin } from 'lucide-react';
 import { useGetBuildings, useGetProject, useGetUnits } from '@workspace/api-client-react';
 import type { Building, GetUnitsParams, Unit } from '@workspace/api-client-react';
 import heroImage from '../assets/vivid-residences.jpg';
@@ -51,6 +51,16 @@ export default function HomePage() {
         </nav>
         <div className="nav-actions">
           <button className="lang-button" onClick={() => setArabic(!arabic)} data-testid="button-language" aria-label="Switch language">{arabic ? 'EN' : 'عربي'}</button>
+          <Link
+            href="/sign-in"
+            className="button small secondary staff-login-link"
+            aria-label={arabic ? 'تسجيل دخول فريق المبيعات' : 'Sales team sign in'}
+            data-testid="link-sales-login"
+          >
+            <span className="staff-login-full">{arabic ? 'دخول فريق المبيعات' : 'Sales login'}</span>
+            <span className="staff-login-compact">{arabic ? 'دخول' : 'Sign in'}</span>
+            <LogIn size={14} aria-hidden="true" />
+          </Link>
           <a className="button small" href="#explore" data-testid="button-explore">{arabic ? 'اكتشف منزلك' : 'Find your home'} <ArrowLeft size={14} /></a>
         </div>
       </header>

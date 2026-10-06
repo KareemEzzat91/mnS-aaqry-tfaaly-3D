@@ -100,6 +100,9 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .nav-links a:hover { color:hsl(var(--foreground)); }
 .nav-actions { display:flex; align-items:center; gap:13px; }
 .lang-button { border:0; background:none; padding:8px; color:hsl(var(--foreground)); cursor:pointer; font-weight:600; }
+.staff-login-link { white-space:nowrap; }
+.staff-login-link svg { flex:none; }
+.staff-login-compact { display:none; }
 .button { border:1px solid hsl(var(--primary)); border-radius:999px; padding:13px 21px; color:hsl(var(--primary-foreground)); background:hsl(var(--primary)); display:inline-flex; align-items:center; gap:10px; text-decoration:none; font-size:13px; font-weight:600; cursor:pointer; transition:transform .25s, background .25s; }
 .button:hover { transform:translateY(-2px); background:hsl(163 30% 21%); }
 .button.secondary { color:hsl(var(--foreground)); background:transparent; border-color:hsl(var(--border)); }
@@ -264,6 +267,10 @@ button, a { -webkit-tap-highlight-color: transparent; }
   .shell { width:calc(100% - 32px); }
   .brand-name { font-size:15px; }
   .nav-actions .button { padding:10px 13px; font-size:11px; }
+  .nav-actions { gap:7px; }
+  .nav-actions .staff-login-link { padding:9px 10px; gap:5px; font-size:10px; }
+  .staff-login-full { display:none; }
+  .staff-login-compact { display:inline; }
   .hero h1 { font-size:48px; }
   .hero-image { min-height:330px; }
   .image-caption { left:16px; right:16px; bottom:16px; }
@@ -275,4 +282,11 @@ button, a { -webkit-tap-highlight-color: transparent; }
   .unit-info { grid-template-columns:repeat(3,1fr); }
   .unit-title { font-size:42px; }
   .footer { gap:14px; flex-wrap:wrap; }
+}
+@media (max-width: 360px) {
+  .topbar .brand { gap:7px; }
+  .topbar .brand-mark { width:30px; height:30px; }
+  .nav-actions { gap:5px; }
+  .nav-actions .button { padding:8px 9px; font-size:10px; gap:6px; }
+  .lang-button { padding:6px; font-size:11px; }
 }
