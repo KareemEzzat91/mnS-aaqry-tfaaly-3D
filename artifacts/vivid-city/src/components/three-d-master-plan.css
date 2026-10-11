@@ -1,0 +1,180 @@
+.vivid-master-plan {
+  --vmp-ink: #30483d;
+  --vmp-muted: #738074;
+  --vmp-line: #d5d2c4;
+  --vmp-paper: #eeece2;
+  color: var(--vmp-ink);
+  width: 100%;
+  min-width: 0;
+  background: #e7e5d9;
+  border: 1px solid var(--vmp-line);
+  overflow: hidden;
+}
+
+.vivid-master-plan__stage {
+  position: relative;
+  width: 100%;
+  height: clamp(300px, 43vw, 540px);
+  min-height: 300px;
+  background: #dce0d3;
+}
+
+.vivid-master-plan__stage canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+}
+
+.vivid-master-plan__caption {
+  position: absolute;
+  inset-inline: 17px;
+  bottom: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+  color: #405647;
+  font-family: 'DM Sans', 'IBM Plex Sans Arabic', sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: .13em;
+  pointer-events: none;
+}
+
+.vivid-master-plan__selection {
+  padding: 15px 17px 17px;
+  border-top: 1px solid rgba(68, 83, 68, .15);
+  background: var(--vmp-paper);
+}
+
+.vivid-master-plan__selection-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 14px;
+  margin-bottom: 11px;
+}
+
+.vivid-master-plan__kicker,
+.vivid-master-plan__count {
+  color: var(--vmp-muted);
+  font-family: 'DM Sans', 'IBM Plex Sans Arabic', sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: .15em;
+}
+
+.vivid-master-plan__building-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.vivid-master-plan__building-option {
+  display: flex;
+  min-width: 136px;
+  flex: 1 1 136px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 5px;
+  padding: 10px 12px;
+  border: 1px solid #d4d1c3;
+  border-radius: 0;
+  color: var(--vmp-ink);
+  background: rgba(250, 248, 240, .56);
+  text-align: start;
+  cursor: pointer;
+  transition: background-color .18s ease, border-color .18s ease, transform .18s ease;
+}
+
+.vivid-master-plan__building-option:hover {
+  border-color: #9eaa98;
+  background: #f5f1e5;
+  transform: translateY(-1px);
+}
+
+.vivid-master-plan__building-option:focus-visible {
+  outline: 2px solid #587363;
+  outline-offset: 2px;
+}
+
+.vivid-master-plan__building-option.is-selected {
+  border-color: #657b68;
+  background: #dce1d2;
+  box-shadow: inset 3px 0 0 #788b70;
+}
+
+.vivid-master-plan[dir='rtl'] .vivid-master-plan__building-option.is-selected {
+  box-shadow: inset -3px 0 0 #788b70;
+}
+
+.vivid-master-plan__building-name {
+  overflow: hidden;
+  max-width: 100%;
+  font-size: 12px;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.vivid-master-plan__building-meta {
+  color: var(--vmp-muted);
+  font-family: 'DM Sans', 'IBM Plex Sans Arabic', sans-serif;
+  font-size: 9px;
+  letter-spacing: .04em;
+}
+
+.vivid-master-plan__empty,
+.vivid-3d-fallback {
+  display: grid;
+  min-height: 100px;
+  place-items: center;
+  padding: 24px;
+  color: var(--vmp-muted);
+  font-size: 13px;
+  line-height: 1.7;
+  text-align: center;
+}
+
+.vivid-3d-fallback {
+  height: 100%;
+  color: #405647;
+  background: #dce0d3;
+}
+
+@media (max-width: 640px) {
+  .vivid-master-plan__stage {
+    height: min(112vw, 420px);
+    min-height: 285px;
+  }
+
+  .vivid-master-plan__caption {
+    inset-inline: 11px;
+    bottom: 10px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    font-size: 8px;
+  }
+
+  .vivid-master-plan__selection {
+    padding: 13px 12px 14px;
+  }
+
+  .vivid-master-plan__building-option {
+    flex: 1 1 calc(50% - 5px);
+    min-width: 0;
+    padding: 9px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vivid-master-plan__building-option {
+    transition: none;
+  }
+
+  .vivid-master-plan__building-option:hover {
+    transform: none;
+  }
+}

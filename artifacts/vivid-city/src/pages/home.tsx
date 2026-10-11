@@ -1,10 +1,12 @@
-import { useEffect, useMemo, useState } from 'react';
+import { lazy, Suspense, useEffect, useMemo, useState } from 'react';
 import { Link } from 'wouter';
-import { ArrowDownLeft, ArrowLeft, ArrowUpRight, LogIn, MapPin } from 'lucide-react';
+import { ArrowDownLeft, ArrowLeft, ArrowUpRight, Box, LogIn, Map, MapPin } from 'lucide-react';
 import { useGetBuildings, useGetProject, useGetUnits } from '@workspace/api-client-react';
-import type { Building, GetUnitsParams, Unit } from '@workspace/api-client-react';
+import type { GetUnitsParams, Unit } from '@workspace/api-client-react';
 import heroImage from '../assets/vivid-residences.jpg';
 import { usePageMetadata } from '@/hooks/use-page-metadata';
+
+const ThreeDMasterPlan = lazy(() => import('@/components/ThreeDMasterPlan'));
 
 function formatPrice(value: number, currency: string) {
   return new Intl.NumberFormat('en', { maximumFractionDigits: 0 }).format(value) + ' ' + currency;
@@ -12,6 +14,7 @@ function formatPrice(value: number, currency: string) {
 
 export default function HomePage() {
   const [arabic, setArabic] = useState(true);
+  const [planView, setPlanView] = useState<'2d' | '3d'>('2d');
   usePageMetadata('VIVID City — New Cairo residences', 'Browse the illustrative VIVID City development, explore sample homes, and request a private visit.');
   useEffect(() => {
     document.documentElement.lang = arabic ? 'ar' : 'en';
@@ -33,8 +36,8 @@ export default function HomePage() {
   const units = (unitsQuery.data ?? []).filter((unit) => unit.status === 'available');
   const selectedBuilding = buildings.find((building) => building.id === buildingId);
 
-  const resetBuilding = (building: Building) => {
-    setBuildingId(building.id === buildingId ? '' : building.id);
+  const toggleBuilding = (nextBuildingId: string) => {
+    setBuildingId((currentBuildingId) => currentBuildingId === nextBuildingId ? '' : nextBuildingId);
     setFloor(undefined);
   };
 
@@ -91,29 +94,67 @@ export default function HomePage() {
         <div className="shell">
           <div className="section-head">
             <div><div className="eyebrow">THE SITE PLAN &nbsp; / &nbsp; 02</div><h2>{arabic ? 'اعثر على مكانك' : 'Find your place'}</h2></div>
-            <p className="section-note">{arabic ? 'اختر مبنى، ثم استكشف الطوابق والمنازل المتاحة حول الحدائق.' : 'Choose a building, then explore its floors and the homes looking out over the gardens.'}</p>
-          </div>
-          <div className="explorer">
-            <div className="site-map" role="group" aria-label="Interactive illustrative site plan">
-              <span className="map-label" style={{ top: '17%', left: '13%' }}>GARDEN COURT</span>
-              <span className="map-label" style={{ top: '72%', right: '14%' }}>WADI WALK</span>
-              <span className="map-label" style={{ top: '47%', left: '44%' }}>CENTRAL GARDEN</span>
-              <span className="map-compass">N ↑</span><span className="map-scale">SITE PLAN · 1:1200</span>
-              <div className="map-buildings">
-                {buildingsQuery.isLoading && <div className="skeleton" style={{ position: 'absolute', inset: '23% 18%', opacity: .55 }} />}
-                {buildings.map((building, index) => (
-                  <button key={building.id} type="button" className={`map-building${building.id === buildingId ? ' selected' : ''}`}
-                    style={{ left: `${building.x}%`, top: `${building.y}%`, transform: 'translate(-50%,-50%)' }}
-                    onClick={() => resetBuilding(building)} aria-pressed={building.id === buildingId}
-                    data-testid={`button-building-${building.id}`} aria-label={`${building.name}, ${building.availableUnits} available`}>
-                    <strong>{building.name || `B${String(index + 1).padStart(2, '0')}`}</strong><span>{building.availableUnits} AVAILABLE</span>
-                  </button>
-                ))}
+            <div className="section-head-controls">
+              <p className="section-note">{arabic ? 'اختر مبنى، ثم استكشف الطوابق والمنازل المتاحة حول الحدائق.' : 'Choose a building, then explore its floors and the homes looking out over the gardens.'}</p>
+              <div className="site-plan-toggle" role="group" aria-label={arabic ? 'طريقة عرض المخطط' : 'Plan view'}>
+                <button type="button" className={planView === '2d' ? 'active' : ''} onClick={() => setPlanView('2d')} aria-pressed={planView === '2d'} data-testid="button-plan-2d">
+                  <Map size={14} aria-hidden="true" />{arabic ? 'المخطط 2D' : '2D plan'}
+                </button>
+                <button type="button" className={planView === '3d' ? 'active' : ''} onClick={() => setPlanView('3d')} aria-pressed={planView === '3d'} data-testid="button-plan-3d">
+                  <Box size={14} aria-hidden="true" />{arabic ? 'المشهد 3D' : '3D view'}
+                </button>
               </div>
             </div>
+          </div>
+          <div className="explorer">
+            {planView === '3d' ? (
+              buildingsQuery.isLoading ? (
+                <div className="plan-view-loading" role="status" data-testid="status-3d-loading">
+                  <Box size={21} aria-hidden="true" />
+                  <span>{arabic ? 'جارٍ تحميل المخطط ثلاثي الأبعاد…' : 'Loading the 3D master plan…'}</span>
+                </div>
+              ) : buildingsQuery.isError ? (
+                <div className="plan-view-loading is-error" role="alert" data-testid="error-3d-buildings">
+                  <span>{arabic ? 'تعذر تحميل بيانات المباني.' : 'Building data could not be loaded.'}</span>
+                  <button className="button small secondary" onClick={() => void buildingsQuery.refetch()}>{arabic ? 'إعادة المحاولة' : 'Retry'}</button>
+                </div>
+              ) : (
+                <Suspense fallback={
+                  <div className="plan-view-loading" role="status" data-testid="status-3d-loading">
+                    <Box size={21} aria-hidden="true" />
+                    <span>{arabic ? 'جارٍ تحميل المخطط ثلاثي الأبعاد…' : 'Loading the 3D master plan…'}</span>
+                  </div>
+                }>
+                  <ThreeDMasterPlan
+                    buildings={buildings}
+                    selectedBuildingId={buildingId}
+                    arabic={arabic}
+                    onSelectBuilding={toggleBuilding}
+                  />
+                </Suspense>
+              )
+            ) : (
+              <div className="site-map" role="group" aria-label={arabic ? 'مخطط توضيحي تفاعلي للموقع' : 'Interactive illustrative site plan'}>
+                <span className="map-label" style={{ top: '17%', left: '13%' }}>GARDEN COURT</span>
+                <span className="map-label" style={{ top: '72%', right: '14%' }}>WADI WALK</span>
+                <span className="map-label" style={{ top: '47%', left: '44%' }}>CENTRAL GARDEN</span>
+                <span className="map-compass">N ↑</span><span className="map-scale">SITE PLAN · 1:1200</span>
+                <div className="map-buildings">
+                  {buildingsQuery.isLoading && <div className="skeleton" style={{ position: 'absolute', inset: '23% 18%', opacity: .55 }} />}
+                  {buildings.map((building, index) => (
+                    <button key={building.id} type="button" className={`map-building${building.id === buildingId ? ' selected' : ''}`}
+                      style={{ left: `${building.x}%`, top: `${building.y}%`, transform: 'translate(-50%,-50%)' }}
+                      onClick={() => toggleBuilding(building.id)} aria-pressed={building.id === buildingId}
+                      data-testid={`button-building-${building.id}`} aria-label={`${building.name}, ${building.availableUnits} available`}>
+                      <strong>{building.name || `B${String(index + 1).padStart(2, '0')}`}</strong><span>{building.availableUnits} AVAILABLE</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
             <aside className="explore-panel">
               <div className="panel-top">
-                <div><div className="eyebrow">{arabic ? 'مجموعتك المختارة' : 'YOUR SELECTION'}</div><h3>{selectedBuilding?.name ?? (arabic ? 'كل المساكن' : 'All residences')}</h3><div className="available">{selectedBuilding ? `${selectedBuilding.availableUnits} ${arabic ? 'منزل متاح' : 'homes available'}` : `${project?.availableHomes ?? units.length} ${arabic ? 'منزل متاح' : 'homes available'}`}</div></div>
+                <div><div className="eyebrow" data-testid="text-selected-building-id">{selectedBuilding ? `${arabic ? 'المبنى' : 'BUILDING'} / ${selectedBuilding.id}` : (arabic ? 'مجموعتك المختارة' : 'YOUR SELECTION')}</div><h3>{selectedBuilding?.name ?? (arabic ? 'كل المساكن' : 'All residences')}</h3><div className="available">{selectedBuilding ? `${selectedBuilding.availableUnits} ${arabic ? 'منزل متاح' : 'homes available'}` : `${project?.availableHomes ?? units.length} ${arabic ? 'منزل متاح' : 'homes available'}`}</div></div>
                 <span className="brand-mark" style={{ width: 30, height: 30, fontSize: 11 }}>V</span>
               </div>
               <div className="floor-label">{arabic ? 'اختر الطابق' : 'SELECT A FLOOR'}</div>

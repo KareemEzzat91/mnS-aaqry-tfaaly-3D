@@ -1,0 +1,52 @@
+I want to upgrade the existing VIVID City MVP by adding a simple, interactive, experimental 3D real-estate experience.
+
+IMPORTANT: Inspect the existing codebase first. Do not rebuild the project, replace the current stack, or remove existing features.
+
+### 1. Inspect Before Implementing
+- Review the current React + Vite frontend, Express backend, database schema, unit details page, and existing illustrative site plan.
+- Identify how buildings, units, prices, availability statuses, and visit requests currently work.
+- Reuse existing routes, API endpoints, data models, styling conventions, and components wherever possible.
+- Present a short implementation plan before making changes.
+
+### 2. Add a Lightweight 3D Master Plan
+- Use React Three Fiber and Three.js if compatible with the current project.
+- Build a simple procedural 3D residential compound using basic geometries: buildings, roads, sidewalks, trees, and green areas.
+- Do not require external 3D assets, paid APIs, AI model-generation services, or proprietary assets.
+- Make the scene visually polished enough for an MVP demo, but keep it lightweight.
+- Add orbit controls, zoom, sensible camera limits, lighting, and responsive sizing.
+- Provide a clear loading state and a fallback if WebGL is unavailable.
+
+### 3. Make Buildings Interactive
+- Allow users to click a building to select it and display its identifier and available units.
+- Connect building and unit selections to the existing project data and API wherever the current schema supports them.
+- Do not invent a new backend or duplicate existing business logic.
+- If the existing data model cannot support a mapping, explain the limitation and implement a clearly labeled demo-only mapping.
+
+### 4. Unit Selection
+- Allow users to select a unit and view its details, price, and availability.
+- Use the existing backend as the source of truth for unit status and pricing.
+- Do not hardcode production prices or pretend illustrative data is live inventory.
+- Preserve the current unit details page and consent-based visit request flow.
+- Clearly label all generated buildings and inventory as illustrative demo data.
+
+### 5. UI and UX
+- Integrate the 3D experience into the existing VIVID City design and Arabic/English localization.
+- Preserve RTL/LTR behavior and existing navigation.
+- Add a simple way to switch between the existing 2D site plan and the new 3D view if feasible.
+- Ensure the experience works on mobile and desktop, with touch-friendly controls.
+- Respect reduced-motion preferences where practical.
+
+### 6. Technical Requirements
+- Keep the existing React + Vite + Express + PostgreSQL + Drizzle architecture.
+- Avoid unnecessary dependencies and do not modify authentication, authorization, database schema, or staff dashboard unless absolutely necessary.
+- Do not expose environment variables, API keys, or secrets.
+- Do not add real customer data.
+- Keep the 3D rendering separate from business logic and data fetching.
+
+### 7. Validation
+- Run the workspace typecheck and production build.
+- Test the public project page, existing 2D view, new 3D view, building selection, unit details, and visit request flow.
+- Check console/runtime errors and mobile layout.
+- Report which checks actually passed and which could not be verified.
+
+Start by inspecting the existing implementation and proposing the smallest safe change set. Then implement it without breaking existing features.
